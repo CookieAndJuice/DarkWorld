@@ -1,0 +1,9 @@
+
+#pragma once
+
+#define CPROFILE_DWPLAYERCAPSULE TEXT("DWPlayerCapsule")
+#define CPROFILE_DWENEMYCAPSULE TEXT("DWEnemyCapsule")
+#define CPROFILE_DWPLAYERWEAPON TEXT("DWPlayerWeapon")
+#define CPROFILE_DWLOCKON TEXT("DWLockOnProfile")
+#define CCHANNEL_DWPLAYER ECC_GameTraceChannel1
+#define CCHANNEL_DWENEMY ECC_GameTraceChannel2
