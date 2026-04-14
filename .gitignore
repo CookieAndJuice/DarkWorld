@@ -73,3 +73,9 @@ Plugins/**/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+# Content Asset Files
+UnrealEngine/Project/DarkWorld/Content/Abandoned_Cathedral/*
+UnrealEngine/Project/DarkWorld/Content/Dark_Knight/*
+UnrealEngine/Project/DarkWorld/Content/ParagonGreystone/*
+UnrealEngine/Project/DarkWorld/Content/ParagonKhaimera/*
