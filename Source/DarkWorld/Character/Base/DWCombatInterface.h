@@ -24,6 +24,6 @@ public:
 	virtual void CombatChangeCanCombo() const = 0;
 	virtual void CombatCheckCombo() const = 0;
 	
-	virtual void StartAttack() = 0;
-	virtual void EndAttack() = 0;
+	virtual void StartCombo() = 0;
+	virtual void EndCombo() = 0;
 };

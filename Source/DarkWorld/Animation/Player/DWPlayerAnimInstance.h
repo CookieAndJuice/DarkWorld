@@ -16,14 +16,9 @@ class DARKWORLD_API UDWPlayerAnimInstance : public UAnimInstance
 	
 public:
 	UDWPlayerAnimInstance();
-	
-protected:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 	
-protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn)
-	TObjectPtr<ACharacter> Owner;
-	
+protected:	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn)
 	TObjectPtr<class ADWPlayerCharacter> Player;
 	

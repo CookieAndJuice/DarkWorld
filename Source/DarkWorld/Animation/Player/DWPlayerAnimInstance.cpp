@@ -17,7 +17,7 @@ void UDWPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 	
-	Owner = Cast<ACharacter>(GetOwningActor());
+	ACharacter* Owner = Cast<ACharacter>(GetOwningActor());
 	if (Owner)
 	{
 		Movement = Owner->GetCharacterMovement();
@@ -28,7 +28,7 @@ void UDWPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	
 	Velocity = Movement->Velocity;
 	GroundSpeed = Velocity.Size2D();
-	YawDirection = UKismetAnimationLibrary::CalculateDirection(Velocity, Owner->GetActorRotation());
+	YawDirection = UKismetAnimationLibrary::CalculateDirection(Velocity, Player->GetActorRotation());
 	bIsIdle = GroundSpeed < MovingThreshold;
 	bIsFalling = Movement->IsFalling();
 	bIsJumping = bIsFalling && (Velocity.Z > JumpThreshold);

@@ -34,8 +34,8 @@ public:
 	virtual void CombatChangeCanCombo() const override;
 	virtual void CombatCheckCombo() const override;
 	
-	virtual void StartAttack() override;
-	virtual void EndAttack() override;
+	virtual void StartCombo() override;
+	virtual void EndCombo() override;
 	
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	

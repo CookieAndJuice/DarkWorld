@@ -30,12 +30,16 @@ protected:
 	void InputAttack(const FInputActionValue& Value);
 	
 // Attack Logic Function
-public:
-	void ChangeCanCombo();
-	void CheckCombo();
+protected:
+	void BeginAttack();
+	void EndAttack(class UAnimMontage* TargetMontage, bool IsProperlyEnded);
 	
-	void StartAttack(UStaticMeshComponent* Weapon);
-	void EndAttack(UStaticMeshComponent* Weapon);
+public:
+	virtual void ChangeCanCombo();
+	virtual void CheckCombo();
+	
+	virtual void StartCombo(UStaticMeshComponent* Weapon);
+	virtual void EndCombo(UStaticMeshComponent* Weapon);
 	
 protected:
 	UFUNCTION()
@@ -43,10 +47,6 @@ protected:
 	
 	UFUNCTION()
 	void OnWeaponEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-	
-protected:
-	void BeginAttackCombo();
-	void EndAttackCombo(class UAnimMontage* TargetMontage, bool IsProperlyEnded);
 	
 protected:
 	UPROPERTY(EditAnywhere, Category = Combat)

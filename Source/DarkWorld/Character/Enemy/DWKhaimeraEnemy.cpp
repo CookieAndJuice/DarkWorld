@@ -3,6 +3,7 @@
 
 #include "DWKhaimeraEnemy.h"
 
+#include "DWEnemyCombatComponent.h"
 #include "DWEnemyStatComponent.h"
 #include "Character/Base/DWCharacterStatComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -21,6 +22,9 @@
 ADWKhaimeraEnemy::ADWKhaimeraEnemy()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	
+	EnemyStatComponent = CreateDefaultSubobject<UDWEnemyStatComponent>(TEXT("EnemyStatComponent"));
+	EnemyCombatComponent = CreateDefaultSubobject<UDWEnemyCombatComponent>(TEXT("EnemyCombatComponent"));
 	
 	AIControllerClass = ADWAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
@@ -48,8 +52,6 @@ ADWKhaimeraEnemy::ADWKhaimeraEnemy()
 			GetMesh()->SetAnimInstanceClass(CharacterAppearanceData->AnimInstance);
 		}
 	}
-	
-	EnemyStatComponent = CreateDefaultSubobject<UDWEnemyStatComponent>(TEXT("EnemyStatComponent"));
 	
 	HpBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HpBar"));
 	HpBar->SetupAttachment(GetMesh());

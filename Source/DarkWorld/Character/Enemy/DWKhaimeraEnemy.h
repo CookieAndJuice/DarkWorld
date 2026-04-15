@@ -33,6 +33,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	TObjectPtr<class UDWEnemyStatComponent> EnemyStatComponent;
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	TObjectPtr<class UDWEnemyCombatComponent> EnemyCombatComponent;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI", meta=(AllowPrivateAccess="true"))
 	TObjectPtr<class UWidgetComponent> HpBar;
 	

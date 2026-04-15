@@ -18,7 +18,7 @@ void UAnimNotify_CheckHitByAttack::NotifyBegin(USkeletalMeshComponent* MeshComp,
 	IDWCombatInterface* Character = Cast<IDWCombatInterface>(MeshComp->GetOwner());
 	if (Character)
 	{
-		Character->StartAttack();
+		Character->StartCombo();
 	}
 }
 
@@ -31,6 +31,6 @@ void UAnimNotify_CheckHitByAttack::NotifyEnd(USkeletalMeshComponent* MeshComp, U
 	IDWCombatInterface* Character = Cast<IDWCombatInterface>(MeshComp->GetOwner());
 	if (Character)
 	{
-		Character->EndAttack();
+		Character->EndCombo();
 	}
 }

@@ -19,14 +19,9 @@ UDWPlayerCombatComponent::UDWPlayerCombatComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
+	ConstructorHelpers::FObjectFinder<UDWAttackComboAnimData> AttackComboAnimDataRef(TEXT("/Script/DarkWorld.DWAttackComboAnimData'/Game/Dark_World/Data/Animation/DA_DWPlayerAttackComboAnimData.DA_DWPlayerAttackComboAnimData'"));
 	ConstructorHelpers::FObjectFinder<UInputAction> AttackActionRef(TEXT("/Script/EnhancedInput.InputAction'/Game/Dark_World/Input/IA_DWAttack.IA_DWAttack'"));
 	
-	if (AttackActionRef.Succeeded())
-	{
-		AttackAction = AttackActionRef.Object;
-	}
-	
-	ConstructorHelpers::FObjectFinder<UDWAttackComboAnimData> AttackComboAnimDataRef(TEXT("/Script/DarkWorld.DWAttackComboAnimData'/Game/Dark_World/Data/Animation/DA_DWAttackComboAnimData.DA_DWAttackComboAnimData'"));
 	if (AttackComboAnimDataRef.Succeeded())
 	{
 		AttackComboAnimData = AttackComboAnimDataRef.Object;
@@ -36,6 +31,10 @@ UDWPlayerCombatComponent::UDWPlayerCombatComponent()
 			AttackMontage = AttackComboAnimData->AttackMontage;
 		}
 		MaxComboCount = AttackComboAnimData->MaxComboCount;
+	}
+	if (AttackActionRef.Succeeded())
+	{
+		AttackAction = AttackActionRef.Object;
 	}
 }
 
@@ -64,7 +63,7 @@ void UDWPlayerCombatComponent::InputAttack(const FInputActionValue& Value)
 {
 	if (0 == CurrentComboCount)
 	{
-		BeginAttackCombo();
+		BeginAttack();
 	}
 	
 	if (bCanCombo)
@@ -77,6 +76,25 @@ void UDWPlayerCombatComponent::InputAttack(const FInputActionValue& Value)
 		bNextComboCommand = false;
 		// UE_LOG(LogTemp, Warning, TEXT("bNextComboCommand : %s"), bNextComboCommand ? TEXT("true") : TEXT("false"));
 	}
+}
+
+void UDWPlayerCombatComponent::BeginAttack()
+{
+	CurrentComboCount = 1;
+	
+	UAnimInstance* AnimInstance = Owner->GetMesh()->GetAnimInstance();
+	AnimInstance->Montage_Play(AttackMontage);
+	// UE_LOG(LogTemp, Warning, TEXT("CurrentComboCount : %d, MaxComboCount : %d"), CurrentComboCount, MaxComboCount);
+	
+	FOnMontageEnded EndDelegate;
+	EndDelegate.BindUObject(this, &UDWPlayerCombatComponent::EndAttack);
+	AnimInstance->Montage_SetEndDelegate(EndDelegate, AttackMontage);
+}
+
+void UDWPlayerCombatComponent::EndAttack(class UAnimMontage* TargetMontage, bool IsProperlyEnded)
+{
+	CurrentComboCount = 0;
+	// UE_LOG(LogTemp, Warning, TEXT("CurrentComboCount : %d, MaxComboCount : %d"), CurrentComboCount, MaxComboCount);
 }
 
 void UDWPlayerCombatComponent::ChangeCanCombo()
@@ -102,7 +120,7 @@ void UDWPlayerCombatComponent::CheckCombo()
 	// UE_LOG(LogTemp, Warning, TEXT("bCanCombo %s"), bCanCombo ? TEXT("true") : TEXT("false"));
 }
 
-void UDWPlayerCombatComponent::StartAttack(UStaticMeshComponent* Weapon)
+void UDWPlayerCombatComponent::StartCombo(UStaticMeshComponent* Weapon)
 {
 	if (Weapon)
 	{
@@ -111,7 +129,7 @@ void UDWPlayerCombatComponent::StartAttack(UStaticMeshComponent* Weapon)
 	}
 }
 
-void UDWPlayerCombatComponent::EndAttack(UStaticMeshComponent* Weapon)
+void UDWPlayerCombatComponent::EndCombo(UStaticMeshComponent* Weapon)
 {
 	if (Weapon)
 	{
@@ -144,23 +162,4 @@ void UDWPlayerCombatComponent::OnWeaponEndOverlap(UPrimitiveComponent* Overlappe
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	UE_LOG(DWCombat, Warning, TEXT("Weapon Enemy Detect End!!!"));
-}
-
-void UDWPlayerCombatComponent::BeginAttackCombo()
-{
-	CurrentComboCount = 1;
-	
-	UAnimInstance* AnimInstance = Owner->GetMesh()->GetAnimInstance();
-	AnimInstance->Montage_Play(AttackMontage);
-	// UE_LOG(LogTemp, Warning, TEXT("CurrentComboCount : %d, MaxComboCount : %d"), CurrentComboCount, MaxComboCount);
-	
-	FOnMontageEnded EndDelegate;
-	EndDelegate.BindUObject(this, &UDWPlayerCombatComponent::EndAttackCombo);
-	AnimInstance->Montage_SetEndDelegate(EndDelegate, AttackMontage);
-}
-
-void UDWPlayerCombatComponent::EndAttackCombo(class UAnimMontage* TargetMontage, bool IsProperlyEnded)
-{
-	CurrentComboCount = 0;
-	// UE_LOG(LogTemp, Warning, TEXT("CurrentComboCount : %d, MaxComboCount : %d"), CurrentComboCount, MaxComboCount);
 }

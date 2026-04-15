@@ -55,7 +55,7 @@ void UDWPlayerLockOnComponent::InputLockOn()
 		 * 1. 플레이어 시야 내에서 가장 중심에 있는 타겟을 찾는다.
 		 * 2. 타겟에게 플레이어 시야가 고정된다.
 		 * 3. 플레이어 애니메이션도 전용으로 바뀐다.
-		 * 4. UI에 락온 발생
+		 * 4. 적에게 락온 UI 생성
 		 */
 	
 		// 1. 플레이어 시야 내에서 가장 중심에 있는 타겟을 찾는다.
@@ -67,6 +67,8 @@ void UDWPlayerLockOnComponent::InputLockOn()
 		if (bFindResult)
 		{
 			bIsLockOn = true;
+			// 애니메이션 변경
+			// 적에게 락온 UI 생성
 		}
 		else
 		{

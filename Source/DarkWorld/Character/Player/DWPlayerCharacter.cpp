@@ -145,14 +145,14 @@ void ADWPlayerCharacter::CombatCheckCombo() const
 	PlayerCombatComponent->CheckCombo();
 }
 
-void ADWPlayerCharacter::StartAttack()
+void ADWPlayerCharacter::StartCombo()
 {
-	PlayerCombatComponent->StartAttack(RightHand);
+	PlayerCombatComponent->StartCombo(RightHand);
 }
 
-void ADWPlayerCharacter::EndAttack()
+void ADWPlayerCharacter::EndCombo()
 {
-	PlayerCombatComponent->EndAttack(RightHand);
+	PlayerCombatComponent->EndCombo(RightHand);
 }
 
 float ADWPlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
