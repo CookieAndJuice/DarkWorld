@@ -3,10 +3,11 @@
 
 #include "AnimNotify_CheckHitByAttack.h"
 
-#include "Character/Base/DWCombatInterface.h"
+#include "Character/Base/DWCharacterCombatInterface.h"
 
 UAnimNotify_CheckHitByAttack::UAnimNotify_CheckHitByAttack()
 {
+	WeaponName = TEXT("Default");
 }
 
 void UAnimNotify_CheckHitByAttack::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
@@ -15,10 +16,10 @@ void UAnimNotify_CheckHitByAttack::NotifyBegin(USkeletalMeshComponent* MeshComp,
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 	
 	// 공격 시작
-	IDWCombatInterface* Character = Cast<IDWCombatInterface>(MeshComp->GetOwner());
+	IDWCharacterCombatInterface* Character = Cast<IDWCharacterCombatInterface>(MeshComp->GetOwner());
 	if (Character)
 	{
-		Character->StartCombo();
+		Character->StartCombo(WeaponName);
 	}
 }
 
@@ -28,9 +29,9 @@ void UAnimNotify_CheckHitByAttack::NotifyEnd(USkeletalMeshComponent* MeshComp, U
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
 	
 	// 공격 끝
-	IDWCombatInterface* Character = Cast<IDWCombatInterface>(MeshComp->GetOwner());
+	IDWCharacterCombatInterface* Character = Cast<IDWCharacterCombatInterface>(MeshComp->GetOwner());
 	if (Character)
 	{
-		Character->EndCombo();
+		Character->EndCombo(WeaponName);
 	}
 }

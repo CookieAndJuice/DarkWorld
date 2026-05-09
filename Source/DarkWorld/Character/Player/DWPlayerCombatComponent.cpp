@@ -12,6 +12,7 @@
 #include "Data/DWAttackComboAnimData.h"
 #include "Engine/DamageEvents.h"
 #include "Helper/DWLogCategories.h"
+#include "Helper/LogDebugger.h"
 
 
 // Sets default values for this component's properties
@@ -43,13 +44,6 @@ UDWPlayerCombatComponent::UDWPlayerCombatComponent()
 void UDWPlayerCombatComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	ADWPlayerCharacter* Player = Cast<ADWPlayerCharacter>(GetOwner());
-	if (Player)
-	{
-		Player->GetRightHand()->OnComponentBeginOverlap.AddUniqueDynamic(this, &UDWPlayerCombatComponent::OnWeaponBeginOverlap);
-		Player->GetRightHand()->OnComponentEndOverlap.AddUniqueDynamic(this, &UDWPlayerCombatComponent::OnWeaponEndOverlap);
-	}
 }
 
 void UDWPlayerCombatComponent::SetInputBinding(class UEnhancedInputComponent* InputComponent)
@@ -57,6 +51,16 @@ void UDWPlayerCombatComponent::SetInputBinding(class UEnhancedInputComponent* In
 	Super::SetInputBinding(InputComponent);
 	
 	InputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &UDWPlayerCombatComponent::InputAttack);
+}
+
+void UDWPlayerCombatComponent::AddWeaponInMap(UStaticMeshComponent* Weapon)
+{
+	if (nullptr == Weapon)
+	{
+		return;
+	}
+	WeaponMap.Add(FName(*Weapon->GetName()), Weapon);
+	WeaponMap[*Weapon->GetName()]->OnComponentBeginOverlap.AddUniqueDynamic(this, &UDWPlayerCombatComponent::OnWeaponBeginOverlap);
 }
 
 void UDWPlayerCombatComponent::InputAttack(const FInputActionValue& Value)
@@ -83,6 +87,10 @@ void UDWPlayerCombatComponent::BeginAttack()
 	CurrentComboCount = 1;
 	
 	UAnimInstance* AnimInstance = Owner->GetMesh()->GetAnimInstance();
+	if (nullptr == AnimInstance)
+	{
+		return;
+	}
 	AnimInstance->Montage_Play(AttackMontage);
 	// UE_LOG(LogTemp, Warning, TEXT("CurrentComboCount : %d, MaxComboCount : %d"), CurrentComboCount, MaxComboCount);
 	
@@ -102,7 +110,7 @@ void UDWPlayerCombatComponent::ChangeCanCombo()
 	bCanCombo = true;
 }
 
-void UDWPlayerCombatComponent::CheckCombo()
+void UDWPlayerCombatComponent::CheckNextCombo()
 {
 	if (bNextComboCommand)
 	{
@@ -120,8 +128,15 @@ void UDWPlayerCombatComponent::CheckCombo()
 	// UE_LOG(LogTemp, Warning, TEXT("bCanCombo %s"), bCanCombo ? TEXT("true") : TEXT("false"));
 }
 
-void UDWPlayerCombatComponent::StartCombo(UStaticMeshComponent* Weapon)
+void UDWPlayerCombatComponent::StartCombo(FName WeaponName)
 {
+	if (!WeaponMap.Contains(WeaponName))
+	{
+		UELOG_W(LogTemp, TEXT("Weapon %s doesn't exist in Map"), *WeaponName.ToString());
+		return;
+	}
+	
+	UStaticMeshComponent* Weapon = Cast<UStaticMeshComponent>(WeaponMap[WeaponName]);
 	if (Weapon)
 	{
 		Weapon->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
@@ -129,8 +144,15 @@ void UDWPlayerCombatComponent::StartCombo(UStaticMeshComponent* Weapon)
 	}
 }
 
-void UDWPlayerCombatComponent::EndCombo(UStaticMeshComponent* Weapon)
+void UDWPlayerCombatComponent::EndCombo(FName WeaponName)
 {
+	if (!WeaponMap.Contains(WeaponName))
+	{
+		UELOG_W(LogTemp, TEXT("Weapon %s doesn't exist in Map"), *WeaponName.ToString());
+		return;
+	}
+	
+	UStaticMeshComponent* Weapon = Cast<UStaticMeshComponent>(WeaponMap[WeaponName]);
 	if (Weapon)
 	{
 		Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -150,16 +172,15 @@ void UDWPlayerCombatComponent::OnWeaponBeginOverlap(UPrimitiveComponent* Overlap
 		float PlayerDamage = 0;
 		if (ADWPlayerCharacter* Player = Cast<ADWPlayerCharacter>(Owner))
 		{
-			PlayerDamage = Player->GetPlayerStatComponent()->GetDamage();
+			UDWPlayerStatComponent* PlayerStatComponent = Player->GetPlayerStatComponent();
+			if (PlayerStatComponent)
+			{
+				PlayerDamage = PlayerStatComponent->GetDamage();
+				UELOG_W(LogTemp, TEXT("Damage : %f"), PlayerDamage);
+			}
 		}
 		
 		FDamageEvent DamageEvent;
 		enemy->TakeDamage(PlayerDamage, DamageEvent, Owner->GetController(), Owner);
 	}
-}
-
-void UDWPlayerCombatComponent::OnWeaponEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	UE_LOG(DWCombat, Warning, TEXT("Weapon Enemy Detect End!!!"));
 }

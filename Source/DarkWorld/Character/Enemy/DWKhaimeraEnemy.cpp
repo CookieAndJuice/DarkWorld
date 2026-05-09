@@ -15,6 +15,7 @@
 #include "UI/DWHpBarWidget.h"
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/BehaviorTree.h"
+#include "Helper/LogDebugger.h"
 #include "StatData/DWEnemyStatData.h"
 
 
@@ -64,6 +65,19 @@ ADWKhaimeraEnemy::ADWKhaimeraEnemy()
 		HpBar->SetDrawSize(FVector2D(150.f, 10.f));
 		HpBar->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
+	
+	LeftHand = CreateDefaultSubobject<UCapsuleComponent>(TEXT("LeftHand"));
+	LeftHand->SetupAttachment(GetMesh(), TEXT("weapon_l"));
+	LeftHand->SetCollisionProfileName(CPROFILE_DWENEMYWEAPON);
+	LeftHand->SetRelativeLocationAndRotation(FVector(0,68,-8), FRotator(0,0,90));
+	LeftHand->SetCapsuleHalfHeight(35.f);
+	LeftHand->SetCapsuleRadius(10.f);
+	RightHand = CreateDefaultSubobject<UCapsuleComponent>(TEXT("RightHand"));
+	RightHand->SetupAttachment(GetMesh(), TEXT("weapon_r"));
+	RightHand->SetCollisionProfileName(CPROFILE_DWENEMYWEAPON);
+	RightHand->SetRelativeLocationAndRotation(FVector(0,-68,8), FRotator(0,0,-90));
+	RightHand->SetCapsuleHalfHeight(35.f);
+	RightHand->SetCapsuleRadius(10.f);
 	
 	ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRef(TEXT("/Script/Engine.AnimMontage'/Game/Dark_World/Animation/Enemy/Khaimera/AM_KhaimeraDeath.AM_KhaimeraDeath'"));;
 	if (DeadMontageRef.Succeeded())
@@ -117,6 +131,16 @@ float ADWKhaimeraEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const
 	EnemyStatComponent->ApplyDamage(DamageAmount);
 	
 	return DamageAmount;
+}
+
+void ADWKhaimeraEnemy::SetAIAttackDelegate(const FAICharacterAttackFinished& InOnAttackFinished)
+{
+	EnemyCombatComponent->SetAIAttackDelegate(InOnAttackFinished);
+}
+
+void ADWKhaimeraEnemy::AttackByAI()
+{
+	EnemyCombatComponent->BeginAttack();
 }
 
 void ADWKhaimeraEnemy::SetDead()

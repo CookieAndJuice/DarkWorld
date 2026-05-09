@@ -21,6 +21,7 @@ protected:
 
 public:	
 	virtual void SetInputBinding(class UEnhancedInputComponent* InputComponent) override;
+	void AddWeaponInMap(UStaticMeshComponent* Weapon);
 	
 protected:
 	// Input
@@ -35,18 +36,16 @@ protected:
 	void EndAttack(class UAnimMontage* TargetMontage, bool IsProperlyEnded);
 	
 public:
-	virtual void ChangeCanCombo();
-	virtual void CheckCombo();
+	void ChangeCanCombo();
+	void CheckNextCombo();
 	
-	virtual void StartCombo(UStaticMeshComponent* Weapon);
-	virtual void EndCombo(UStaticMeshComponent* Weapon);
-	
+	void StartCombo(FName WeaponName);
+	void EndCombo(FName WeaponName);
+	bool GetIsWeaponMapEmpty() const { return WeaponMap.IsEmpty(); }
 protected:
 	UFUNCTION()
-	void OnWeaponBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	
-	UFUNCTION()
-	void OnWeaponEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	void OnWeaponBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
 protected:
 	UPROPERTY(EditAnywhere, Category = Combat)
@@ -54,6 +53,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere, Category = Combat)
 	TObjectPtr<class UAnimMontage> AttackMontage;
+	
+	UPROPERTY(EditInstanceOnly, Category = Combat)
+	TMap<FName, TObjectPtr<UPrimitiveComponent>> WeaponMap;
 	
 private:
 	uint8 MaxComboCount = 3;

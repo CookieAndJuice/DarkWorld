@@ -38,9 +38,6 @@ protected:
 	TObjectPtr<class UInputAction> MoveAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta=(AllowPrivateAccess="true"))
-	TObjectPtr<class UInputAction> LookAction;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta=(AllowPrivateAccess="true"))
 	TObjectPtr<class UInputAction> JumpAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta=(AllowPrivateAccess="true"))
@@ -48,7 +45,6 @@ protected:
 	
 protected:
 	void InputMove(const FInputActionValue& Value);
-	void InputLook(const FInputActionValue& Value);
 	void InputJump(const FInputActionValue& Value);
 	void InputStartRun();
 	void InputEndRun();
@@ -57,6 +53,9 @@ protected:
 	void Move(float DeltaTime);
 	
 private:
+	UPROPERTY()
+	TObjectPtr<class ADWPlayerCharacter> Player;
+	
 	float WalkSpeed = 275.f;
 	float RunSpeed = 400.f;
 	bool bIsRunning = false;

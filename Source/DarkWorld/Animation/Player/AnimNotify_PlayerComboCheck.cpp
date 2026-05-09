@@ -3,7 +3,7 @@
 
 #include "AnimNotify_PlayerComboCheck.h"
 
-#include "Character/Base/DWCombatInterface.h"
+#include "Character/Base/DWCharacterCombatInterface.h"
 
 UAnimNotify_PlayerComboCheck::UAnimNotify_PlayerComboCheck()
 {
@@ -14,10 +14,10 @@ void UAnimNotify_PlayerComboCheck::NotifyBegin(USkeletalMeshComponent* MeshComp,
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 	
-	if (IDWCombatInterface* Character = Cast<IDWCombatInterface>(MeshComp->GetOwner()))
+	if (IDWCharacterCombatInterface* Character = Cast<IDWCharacterCombatInterface>(MeshComp->GetOwner()))
 	{
 		// 콤보 가능 여부 체크로
-		Character->CombatChangeCanCombo();
+		Character->ChangeCanCombo();
 	}
 }
 
@@ -26,9 +26,9 @@ void UAnimNotify_PlayerComboCheck::NotifyEnd(USkeletalMeshComponent* MeshComp, U
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
 	
-	if (IDWCombatInterface* Character = Cast<IDWCombatInterface>(MeshComp->GetOwner()))
+	if (IDWCharacterCombatInterface* Character = Cast<IDWCharacterCombatInterface>(MeshComp->GetOwner()))
 	{
 		// 콤보 체크 함수 호출
-		Character->CombatCheckCombo();
+		Character->CheckNextCombo();
 	}
 }

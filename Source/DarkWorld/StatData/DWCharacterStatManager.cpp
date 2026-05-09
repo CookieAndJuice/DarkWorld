@@ -7,7 +7,7 @@ DEFINE_LOG_CATEGORY(LogDWCharacterStatManager);
 
 UDWCharacterStatManager::UDWCharacterStatManager()
 {
-	ConstructorHelpers::FObjectFinder<UDataTable> CharacterStatTableRef(TEXT("/Script/Engine.DataTable'/Game/Dark_World/StatData/DT_PlayerDefaultStat.DT_PlayerDefaultStat'"));
+	ConstructorHelpers::FObjectFinder<UDataTable> CharacterStatTableRef(TEXT("/Script/Engine.DataTable'/Game/Dark_World/StatData/DT_DWPlayerDefaultStat.DT_DWPlayerDefaultStat'"));
 	if (CharacterStatTableRef.Succeeded())
 	{
 		const UDataTable* DataTable = CharacterStatTableRef.Object;

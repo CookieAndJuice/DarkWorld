@@ -4,14 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Character/Base/DWCharacterBase.h"
-#include "Character/Base/DWCombatInterface.h"
+#include "Character/Base/DWCharacterCombatInterface.h"
 #include "DWPlayerCharacter.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DARKWORLD_API ADWPlayerCharacter : public ADWCharacterBase, public IDWCombatInterface
+class DARKWORLD_API ADWPlayerCharacter : public ADWCharacterBase, public IDWCharacterCombatInterface
 {
 	GENERATED_BODY()
 	
@@ -26,18 +26,22 @@ public:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	
 	class UDWPlayerStatComponent* GetPlayerStatComponent() const { return PlayerStatComponent; }
-
 	class UCameraComponent* GetCameraComponent() const { return Camera; }
 	bool GetIsLockOn() const;
 	UStaticMeshComponent* GetRightHand() { return RightHand; }
 	
-	virtual void CombatChangeCanCombo() const override;
-	virtual void CombatCheckCombo() const override;
+	// For Anim Notify
+	virtual void ChangeCanCombo() const override;
+	virtual void CheckNextCombo() const override;
 	
-	virtual void StartCombo() override;
-	virtual void EndCombo() override;
+	virtual void StartCombo(FName WeaponName) const override;
+	virtual void EndCombo(FName WeaponName) const override;
 	
+	// Take Damage
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	
+	// Default Mouse Control
+	void UseDefaultMouseControl();
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
@@ -47,13 +51,13 @@ protected:
 	TObjectPtr<class UDWPlayerMoveComponent> PlayerMoveComponent;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	TObjectPtr<class UDWPlayerLookComponent> PlayerLookComponent;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	TObjectPtr<class UDWPlayerStatComponent> PlayerStatComponent;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	TObjectPtr<class UDWPlayerCombatComponent> PlayerCombatComponent;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
-	TObjectPtr<class UDWPlayerLockOnComponent> PlayerLockOnComponent;
 	
 protected:
 	// Input

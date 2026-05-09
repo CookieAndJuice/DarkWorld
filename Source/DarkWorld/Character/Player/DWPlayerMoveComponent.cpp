@@ -3,6 +3,7 @@
 
 #include "DWPlayerMoveComponent.h"
 
+#include "DWPlayerCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "Character/Base/DWCharacterBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -14,17 +15,12 @@ UDWPlayerMoveComponent::UDWPlayerMoveComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	ConstructorHelpers::FObjectFinder<UInputAction> MoveActionRef(TEXT("/Script/EnhancedInput.InputAction'/Game/Dark_World/Input/IA_DWMove.IA_DWMove'"));
-	ConstructorHelpers::FObjectFinder<UInputAction> LookActionRef(TEXT("/Script/EnhancedInput.InputAction'/Game/Dark_World/Input/IA_DWLook.IA_DWLook'"));
 	ConstructorHelpers::FObjectFinder<UInputAction> JumpActionRef(TEXT("/Script/EnhancedInput.InputAction'/Game/Dark_World/Input/IA_DWJump.IA_DWJump'"));
 	ConstructorHelpers::FObjectFinder<UInputAction> RunActionRef(TEXT("/Script/EnhancedInput.InputAction'/Game/Dark_World/Input/IA_DWRun.IA_DWRun'"));
 	
 	if (MoveActionRef.Succeeded())
 	{
 		MoveAction = MoveActionRef.Object;
-	}
-	if (LookActionRef.Succeeded())
-	{
-		LookAction = LookActionRef.Object;
 	}
 	if (JumpActionRef.Succeeded())
 	{
@@ -39,7 +35,9 @@ UDWPlayerMoveComponent::UDWPlayerMoveComponent()
 // Called when the game starts
 void UDWPlayerMoveComponent::BeginPlay()
 {
-	Super::BeginPlay();	
+	Super::BeginPlay();
+	
+	Player = Cast<ADWPlayerCharacter>(Owner);
 }
 
 void UDWPlayerMoveComponent::InitializeComponent()
@@ -61,7 +59,6 @@ void UDWPlayerMoveComponent::SetInputBinding(class UEnhancedInputComponent* Inpu
 	Super::SetInputBinding(InputComponent);
 	
 	InputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &UDWPlayerMoveComponent::InputMove);
-	InputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &UDWPlayerMoveComponent::InputLook);
 	InputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &UDWPlayerMoveComponent::InputJump);
 	InputComponent->BindAction(RunAction, ETriggerEvent::Started, this, &UDWPlayerMoveComponent::InputStartRun);
 	InputComponent->BindAction(RunAction, ETriggerEvent::Completed, this, &UDWPlayerMoveComponent::InputEndRun);
@@ -72,14 +69,6 @@ void UDWPlayerMoveComponent::InputMove(const FInputActionValue& Value)
 {
 	FVector2D MovementVector = Value.Get<FVector2D>();
 	DesiredDirection = FVector(MovementVector, 0);
-}
-
-void UDWPlayerMoveComponent::InputLook(const FInputActionValue& Value)
-{
-	FVector2D LookVector = Value.Get<FVector2D>();
-	
-	Owner->AddControllerYawInput(LookVector.X);
-	Owner->AddControllerPitchInput(LookVector.Y);
 }
 
 void UDWPlayerMoveComponent::InputJump(const FInputActionValue& Value)

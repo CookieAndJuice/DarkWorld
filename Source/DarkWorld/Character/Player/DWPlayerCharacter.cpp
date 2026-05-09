@@ -4,7 +4,7 @@
 #include "Character/Player/DWPlayerCharacter.h"
 
 #include "DWPlayerCombatComponent.h"
-#include "DWPlayerLockOnComponent.h"
+#include "DWPlayerLookComponent.h"
 #include "Data/DWCharacterAppearanceData.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -17,6 +17,7 @@
 #include "Character/Base/DWCharacterStatComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Helper/DWCollisionName.h"
+#include "Helper/LogDebugger.h"
 
 ADWPlayerCharacter::ADWPlayerCharacter()
 {
@@ -25,7 +26,7 @@ ADWPlayerCharacter::ADWPlayerCharacter()
 	PlayerMoveComponent = CreateDefaultSubobject<UDWPlayerMoveComponent>(TEXT("PlayerMoveComponent"));
 	PlayerStatComponent = CreateDefaultSubobject<UDWPlayerStatComponent>(TEXT("PlayerStatComponent"));
 	PlayerCombatComponent = CreateDefaultSubobject<UDWPlayerCombatComponent>(TEXT("PlayerCombatComponent"));
-	PlayerLockOnComponent = CreateDefaultSubobject<UDWPlayerLockOnComponent>(TEXT("PlayerLockOnComponent"));
+	PlayerLookComponent = CreateDefaultSubobject<UDWPlayerLookComponent>(TEXT("PlayerLookComponent"));
 	
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
@@ -71,21 +72,8 @@ ADWPlayerCharacter::ADWPlayerCharacter()
 			IMC_Player = PlayerControlData->InputMappingContext;
 		}
 		
-		// CharacterMovemnt
-		bUseControllerRotationYaw = PlayerControlData->bUseControllerRotationYaw;
-		GetCharacterMovement()->bOrientRotationToMovement = PlayerControlData->bOrientRotationToMovement;
-		GetCharacterMovement()->bUseControllerDesiredRotation = PlayerControlData->bUseControllerDesiredRotation;
-		GetCharacterMovement()->RotationRate = PlayerControlData->RotationRate;
-		GetCharacterMovement()->MaxWalkSpeed = PlayerControlData->WalkSpeed;
-		PlayerMoveComponent->SetWalkSpeed(PlayerControlData->WalkSpeed);
-		PlayerMoveComponent->SetRunSpeed(PlayerControlData->RunSpeed);
-		
-		// SpringArm
-		SpringArm->bUsePawnControlRotation = PlayerControlData->bUsePawnControlRotation;
-		SpringArm->bInheritPitch = PlayerControlData->bInheritPitch;
-		SpringArm->bInheritYaw = PlayerControlData->bInheritYaw;
-		SpringArm->bInheritRoll = PlayerControlData->bInheritRoll;
-		SpringArm->bDoCollisionTest = PlayerControlData->bDoCollisionTest;
+		// Init Control
+		UseDefaultMouseControl();
 	}
 	
 	LeftHand = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("LeftHand"));
@@ -110,6 +98,9 @@ void ADWPlayerCharacter::BeginPlay()
 	{
 		InputSubsystem->AddMappingContext(IMC_Player, 0);
 	}
+	
+	PlayerCombatComponent->AddWeaponInMap(RightHand);
+	PlayerCombatComponent->AddWeaponInMap(LeftHand);
 }
 
 void ADWPlayerCharacter::Tick(float DeltaSeconds)
@@ -125,34 +116,34 @@ void ADWPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	if (EIC)
 	{
 		PlayerMoveComponent->SetInputBinding(EIC);
+		PlayerLookComponent->SetInputBinding(EIC);
 		PlayerCombatComponent->SetInputBinding(EIC);
-		PlayerLockOnComponent->SetInputBinding(EIC);
 	}
 }
 
 bool ADWPlayerCharacter::GetIsLockOn() const
 {
-	return PlayerLockOnComponent->GetIsLockOn();
+	return PlayerLookComponent->GetIsLockOn();
 }
 
-void ADWPlayerCharacter::CombatChangeCanCombo() const
+void ADWPlayerCharacter::ChangeCanCombo() const
 {
 	PlayerCombatComponent->ChangeCanCombo();
 }
 
-void ADWPlayerCharacter::CombatCheckCombo() const
+void ADWPlayerCharacter::CheckNextCombo() const
 {
-	PlayerCombatComponent->CheckCombo();
+	PlayerCombatComponent->CheckNextCombo();
 }
 
-void ADWPlayerCharacter::StartCombo()
+void ADWPlayerCharacter::StartCombo(FName WeaponName) const
 {
-	PlayerCombatComponent->StartCombo(RightHand);
+	PlayerCombatComponent->StartCombo(WeaponName);
 }
 
-void ADWPlayerCharacter::EndCombo()
+void ADWPlayerCharacter::EndCombo(FName WeaponName) const
 {
-	PlayerCombatComponent->EndCombo(RightHand);
+	PlayerCombatComponent->EndCombo(WeaponName);
 }
 
 float ADWPlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
@@ -163,4 +154,23 @@ float ADWPlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent con
 	PlayerStatComponent->ApplyDamage(DamageAmount);
 	
 	return DamageAmount;
+}
+
+void ADWPlayerCharacter::UseDefaultMouseControl()
+{
+	// CharacterMovemnt
+	bUseControllerRotationYaw = PlayerControlData->bUseControllerRotationYaw;
+	GetCharacterMovement()->bOrientRotationToMovement = PlayerControlData->bOrientRotationToMovement;
+	GetCharacterMovement()->bUseControllerDesiredRotation = PlayerControlData->bUseControllerDesiredRotation;
+	GetCharacterMovement()->RotationRate = PlayerControlData->RotationRate;
+	GetCharacterMovement()->MaxWalkSpeed = PlayerControlData->WalkSpeed;
+	PlayerMoveComponent->SetWalkSpeed(PlayerControlData->WalkSpeed);
+	PlayerMoveComponent->SetRunSpeed(PlayerControlData->RunSpeed);
+		
+	// SpringArm
+	SpringArm->bUsePawnControlRotation = PlayerControlData->bUsePawnControlRotation;
+	SpringArm->bInheritPitch = PlayerControlData->bInheritPitch;
+	SpringArm->bInheritYaw = PlayerControlData->bInheritYaw;
+	SpringArm->bInheritRoll = PlayerControlData->bInheritRoll;
+	SpringArm->bDoCollisionTest = PlayerControlData->bDoCollisionTest;
 }

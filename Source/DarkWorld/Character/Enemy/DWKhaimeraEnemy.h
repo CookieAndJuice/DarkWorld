@@ -21,6 +21,8 @@ protected:
 
 public:
 	virtual void Tick(float DeltaTime) override;
+	
+	class UDWEnemyStatComponent* GetEnemyStatComponent() const { return EnemyStatComponent; }
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	
@@ -28,6 +30,8 @@ public:
 	virtual float GetAttackRange() const override { return 100.f; }
 	virtual class UBehaviorTree* GetBehaviorTree() const override { return BehaviorTree; }
 	virtual class UBlackboardData* GetBlackboardData() const override { return BlackboardData; }
+	virtual void SetAIAttackDelegate(const FAICharacterAttackFinished& InOnAttackFinished) override;
+	virtual void AttackByAI() override;
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
@@ -36,8 +40,17 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	TObjectPtr<class UDWEnemyCombatComponent> EnemyCombatComponent;
 	
+protected:
+	// UI
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI", meta=(AllowPrivateAccess="true"))
 	TObjectPtr<class UWidgetComponent> HpBar;
+	
+	// Weapon
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon", meta=(AllowPrivateAccess="true"))
+	TObjectPtr<UCapsuleComponent> LeftHand;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon", meta=(AllowPrivateAccess="true"))
+	TObjectPtr<UCapsuleComponent> RightHand;
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", Meta=(AllowPrivateAccess="true"))

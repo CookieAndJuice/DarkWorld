@@ -13,6 +13,8 @@ class UDWEnemyAIInterface : public UInterface
 	GENERATED_BODY()
 };
 
+DECLARE_DELEGATE(FAICharacterAttackFinished);
+
 /**
  * 
  */
@@ -27,4 +29,7 @@ public:
 	
 	virtual class UBehaviorTree* GetBehaviorTree() const = 0;
 	virtual class UBlackboardData* GetBlackboardData() const = 0;
+	
+	virtual void SetAIAttackDelegate(const FAICharacterAttackFinished& InOnAttackFinished) = 0;
+	virtual void AttackByAI() = 0;
 };
