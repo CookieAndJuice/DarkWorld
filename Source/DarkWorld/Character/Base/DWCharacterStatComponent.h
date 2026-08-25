@@ -30,8 +30,8 @@ public:
 protected:
 	void SetHp(float NewHp);
 	
+	/** Character Common Stat */
 protected:
-	// Status	
 	UPROPERTY(Transient, VisibleInstanceOnly, Category = "Status")
 	float CurrentHp;
 	UPROPERTY(VisibleInstanceOnly, Category = "Status")
@@ -42,6 +42,8 @@ protected:
 	float Defense;
 	UPROPERTY(VisibleInstanceOnly, Category = "Status")
 	float Damage;
+	UPROPERTY(VisibleInstanceOnly, Category = "Status")
+	float EquipmentWeight;
 	
 	// Character State
 	bool bIsDead = false;

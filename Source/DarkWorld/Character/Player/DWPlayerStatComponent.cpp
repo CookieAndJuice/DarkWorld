@@ -3,7 +3,7 @@
 
 #include "DWPlayerStatComponent.h"
 
-#include "StatData/DWCharacterStatManager.h"
+#include "Stat/DWCharacterStatManager.h"
 
 
 // Sets default values for this component's properties
@@ -16,7 +16,7 @@ UDWPlayerStatComponent::UDWPlayerStatComponent()
 	Defense = 0.f;
 	Stamina = 100.f;
 	Damage = 125.f;
-	Weight = 85.f;
+	EquipmentWeight = 85.f;
 }
 
 void UDWPlayerStatComponent::InitializeComponent()
@@ -26,10 +26,10 @@ void UDWPlayerStatComponent::InitializeComponent()
 	// Player Data에서 레벨 갖고 올 것
 	
 	// Player Data로 바꿀 것
-	MaxHp += UDWCharacterStatManager::Get().GetPlayerVitality(11);
+	MaxHp += UDWCharacterStatManager::Get().GetPlayerVitality(VitalityLevel);
 	CurrentHp = MaxHp;
-	Defense += UDWCharacterStatManager::Get().GetPlayerVitality(11) * 0.5f;
-	Stamina += UDWCharacterStatManager::Get().GetPlayerVigor(5);
-	Weight += UDWCharacterStatManager::Get().GetPlayerCapacity(11);
-	Damage += UDWCharacterStatManager::Get().GetPlayerMotivity(5) + UDWCharacterStatManager::Get().GetPlayerTechnique(5);
+	Defense += UDWCharacterStatManager::Get().GetPlayerVitality(VitalityLevel) * 0.5f;
+	Stamina += UDWCharacterStatManager::Get().GetPlayerVigor(VigorLevel);
+	EquipmentWeight += UDWCharacterStatManager::Get().GetPlayerCapacity(CapacityLevel);
+	Damage += UDWCharacterStatManager::Get().GetPlayerMotivity(MotivityLevel) + UDWCharacterStatManager::Get().GetPlayerTechnique(TechniqueLevel);
 }

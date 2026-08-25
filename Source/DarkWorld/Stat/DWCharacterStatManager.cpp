@@ -1,9 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "StatData/DWCharacterStatManager.h"
+#include "Stat/DWCharacterStatManager.h"
 
 DEFINE_LOG_CATEGORY(LogDWCharacterStatManager);
+
+/**
+ * This Class is Deprecated
+ * This Class is Deprecated
+ * This Class is Deprecated
+ * This Class is Deprecated
+ * This Class is Deprecated
+ */
 
 UDWCharacterStatManager::UDWCharacterStatManager()
 {

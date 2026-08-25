@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Character/Base/DWCharacterStatComponent.h"
-#include "StatData/DWPlayerDefaultStatData.h"
+#include "Stat/DWPlayerDefaultStatData.h"
 #include "DWPlayerStatComponent.generated.h"
 
 
@@ -20,8 +20,22 @@ public:
 protected:
 	virtual void InitializeComponent() override;
 	
-	UPROPERTY(VisibleInstanceOnly, Category = "Status")
-	float Weight;
+	/** Player Default Stat Level */
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Status|Level")
+	int32 VitalityLevel = 11;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Status|Level")
+	int32 VigorLevel = 5;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Status|Level")
+	int32 CapacityLevel = 11;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Status|Level")
+	int32 MotivityLevel = 5;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Status|Level")
+	int32 TechniqueLevel = 5;
 	
 // 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Status")
 // 	FDWCharacterStatData ModifierStat;

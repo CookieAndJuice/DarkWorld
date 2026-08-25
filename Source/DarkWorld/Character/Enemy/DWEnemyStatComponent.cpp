@@ -3,7 +3,7 @@
 
 #include "DWEnemyStatComponent.h"
 
-#include "StatData/DWEnemyStatData.h"
+#include "Stat/DWEnemyStatData.h"
 
 
 // Sets default values for this component's properties

@@ -10,7 +10,11 @@
 DECLARE_LOG_CATEGORY_EXTERN(LogDWCharacterStatManager, Error, All);
 
 /**
- * 
+ * This Class is Deprecated
+ * This Class is Deprecated
+ * This Class is Deprecated
+ * This Class is Deprecated
+ * This Class is Deprecated
  */
 UCLASS()
 class DARKWORLD_API UDWCharacterStatManager : public UObject

@@ -16,7 +16,7 @@
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "Helper/LogDebugger.h"
-#include "StatData/DWEnemyStatData.h"
+#include "Stat/DWEnemyStatData.h"
 
 
 // Sets default values

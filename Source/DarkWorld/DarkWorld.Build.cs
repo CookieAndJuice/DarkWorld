@@ -10,7 +10,19 @@ public class DarkWorld : ModuleRules
 		
 		PublicIncludePaths.AddRange(new string[] { "DarkWorld" });
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "AIModule", "NavigationSystem", "GameplayTasks"});
+		PublicDependencyModuleNames.AddRange(new string[]
+		{
+			"Core",
+			"CoreUObject",
+			"Engine",
+			"InputCore",
+			"EnhancedInput",
+			"UMG",
+			"AIModule",
+			"NavigationSystem",
+			"GameplayTasks",
+			"DeveloperSettings"
+		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "AnimGraphRuntime" });
 
