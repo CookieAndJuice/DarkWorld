@@ -14,6 +14,11 @@
 				"CoreUObject",
 				"AIModule"
 			]
+		},
+		{
+			"Name": "DarkWorldEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins": [

@@ -5,11 +5,11 @@ using System.Collections.Generic;
 
 public class DarkWorldEditorTarget : TargetRules
 {
-	public DarkWorldEditorTarget( TargetInfo Target) : base(Target)
+	public DarkWorldEditorTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V6;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_7;
-		ExtraModuleNames.Add("DarkWorld");
+		ExtraModuleNames.AddRange(new string[] { "DarkWorld", "DarkWorldEditor" });
 	}
 }

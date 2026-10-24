@@ -40,9 +40,6 @@ public:
 	// Take Damage
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	
-	// Default Mouse Control
-	void UseDefaultMouseControl();
-	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
 	TObjectPtr<class UDWPlayerControlData> PlayerControlData;
@@ -58,6 +55,20 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	TObjectPtr<class UDWPlayerCombatComponent> PlayerCombatComponent;
+	
+#if WITH_EDITOR
+public:
+	virtual void OnRefreshPreset() override;
+	
+protected:
+	virtual void PostEditChangeChainProperty(struct FPropertyChangedChainEvent& PropertyChangedEvent) override;
+	
+	virtual void ApplyCharacterAppearanceData() override;
+	void ApplyPlayerControlData();
+	
+	// Default Mouse Control
+	void UseDefaultMouseControl();
+#endif
 	
 protected:
 	// Input

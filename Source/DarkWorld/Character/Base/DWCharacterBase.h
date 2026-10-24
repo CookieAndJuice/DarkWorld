@@ -26,4 +26,14 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "LockOn")
 	TSubclassOf<class UUserWidget> LockOnUI;
+	
+#if WITH_EDITOR
+public:
+	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
+	
+	virtual void OnRefreshPreset();
+	
+protected:
+	virtual void ApplyCharacterAppearanceData();
+#endif
 };

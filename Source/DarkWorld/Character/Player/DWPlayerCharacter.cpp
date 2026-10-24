@@ -28,53 +28,11 @@ ADWPlayerCharacter::ADWPlayerCharacter()
 	PlayerCombatComponent = CreateDefaultSubobject<UDWPlayerCombatComponent>(TEXT("PlayerCombatComponent"));
 	PlayerLookComponent = CreateDefaultSubobject<UDWPlayerLookComponent>(TEXT("PlayerLookComponent"));
 	
+	// SpringArm & Camera
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	
-	ConstructorHelpers::FObjectFinder<UDWCharacterAppearanceData> CharacterAppearanceDataRef(TEXT("/Script/DarkWorld.DWCharacterAppearanceData'/Game/Dark_World/Data/Player/DA_DWPlayerAppearance.DA_DWPlayerAppearance'"));
-	if (CharacterAppearanceDataRef.Succeeded())
-	{
-		CharacterAppearanceData = CharacterAppearanceDataRef.Object;
-		
-		// Capsule
-		GetCapsuleComponent()->SetCapsuleHalfHeight(CharacterAppearanceData->CapsuleHalfHeight);
-		GetCapsuleComponent()->SetCapsuleRadius(CharacterAppearanceData->CapsuleRadius);
-		
-		// Skeletal Mesh
-		if (CharacterAppearanceData->SkeletalMesh)
-		{
-			GetMesh()->SetSkeletalMesh(CharacterAppearanceData->SkeletalMesh);
-			GetMesh()->SetRelativeLocationAndRotation(CharacterAppearanceData->MeshLocation, CharacterAppearanceData->MeshRotation);
-		}
-		
-		// SpringArm & Camera
-		SpringArm->SetupAttachment(RootComponent);
-		Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
-	
-		SpringArm->SetRelativeLocationAndRotation(CharacterAppearanceData->SpringArmLocation, CharacterAppearanceData->SpringArmRotation);
-		SpringArm->TargetArmLength = CharacterAppearanceData->TargetArmLength;
-		
-		// AnimInstance
-		if (CharacterAppearanceData->AnimInstance)
-		{
-			GetMesh()->SetAnimInstanceClass(CharacterAppearanceData->AnimInstance);
-		}
-	}
-	
-	ConstructorHelpers::FObjectFinder<UDWPlayerControlData> PlayerControlDataRef(TEXT("/Script/DarkWorld.DWPlayerControlData'/Game/Dark_World/Data/Player/DA_DWPlayerControl.DA_DWPlayerControl'"));
-	if (PlayerControlDataRef.Succeeded())
-	{
-		PlayerControlData = PlayerControlDataRef.Object;
-		
-		// Input Mapping Context
-		if (PlayerControlData->InputMappingContext)
-		{
-			IMC_Player = PlayerControlData->InputMappingContext;
-		}
-		
-		// Init Control
-		UseDefaultMouseControl();
-	}
+	SpringArm->SetupAttachment(RootComponent);
+	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 	
 	LeftHand = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("LeftHand"));
 	LeftHand->SetupAttachment(GetMesh(), TEXT("ik_hand_l"));
@@ -87,6 +45,8 @@ ADWPlayerCharacter::ADWPlayerCharacter()
 	{
 		RightHand->SetStaticMesh(RightHandWeaponMeshRef.Object);
 	}
+	
+	AutoPossessPlayer = EAutoReceiveInput::Type::Player0;
 }
 
 void ADWPlayerCharacter::BeginPlay()
@@ -156,6 +116,48 @@ float ADWPlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent con
 	return DamageAmount;
 }
 
+#if WITH_EDITOR
+void ADWPlayerCharacter::OnRefreshPreset()
+{
+	Super::OnRefreshPreset();
+	
+	ApplyPlayerControlData();
+}
+
+void ADWPlayerCharacter::PostEditChangeChainProperty(struct FPropertyChangedChainEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeChainProperty(PropertyChangedEvent);
+	
+	if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(ADWPlayerCharacter, PlayerControlData))
+	{
+		ApplyPlayerControlData();
+	}
+}
+
+void ADWPlayerCharacter::ApplyCharacterAppearanceData()
+{
+	Super::ApplyCharacterAppearanceData();
+	
+	if (IsValid(CharacterAppearanceData) == false) return;
+	
+	SpringArm->SetRelativeLocationAndRotation(CharacterAppearanceData->SpringArmLocation, CharacterAppearanceData->SpringArmRotation);
+	SpringArm->TargetArmLength = CharacterAppearanceData->TargetArmLength;
+}
+
+void ADWPlayerCharacter::ApplyPlayerControlData()
+{
+	if (IsValid(PlayerControlData) == false) return;
+		
+	// Input Mapping Context
+	if (PlayerControlData->InputMappingContext)
+	{
+		IMC_Player = PlayerControlData->InputMappingContext;
+	}
+		
+	// Init Control
+	UseDefaultMouseControl();
+}
+
 void ADWPlayerCharacter::UseDefaultMouseControl()
 {
 	// CharacterMovemnt
@@ -174,3 +176,4 @@ void ADWPlayerCharacter::UseDefaultMouseControl()
 	SpringArm->bInheritRoll = PlayerControlData->bInheritRoll;
 	SpringArm->bDoCollisionTest = PlayerControlData->bDoCollisionTest;
 }
+#endif
